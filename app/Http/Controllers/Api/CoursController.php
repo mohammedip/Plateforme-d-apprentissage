@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Cours;
 use Illuminate\Http\Request;
+use App\Classes\ApiResponseClass;
 use App\Http\Requests\CoursRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CoursResource;
@@ -34,7 +35,7 @@ class CoursController extends Controller
         $courses = $this->coursRepository->getAll();
 
         if ($courses->count() > 0) {
-            return CoursResource::collection($courses);
+            return ApiResponseClass::sendResponse(CoursResource::collection($courses),'',200);
         } else {
             return response()->json(['message' => 'No courses for the moment'], 200);
         }
@@ -60,17 +61,19 @@ class CoursController extends Controller
      */
     public function store(CoursRequest $request)
     {
-        $cours = $this->coursRepository->create($request->validated());
+        try{
+            $cours = $this->coursRepository->create($request->validated());
 
-        if ($request->has('tags_id')) {
-            $tagIds = $request->input('tags_id');
-            $cours->tags()->attach($tagIds);
-        }
+            if ($request->has('tags_id')) {
+                $tagIds = $request->input('tags_id');
+                $cours->tags()->attach($tagIds);
+            }
+            return ApiResponseClass::sendResponse(new CoursResource($cours),'Cours Create Successful',201);
+           
 
-        return response()->json([
-            'message' => 'Cours added successfully',
-            'data' => new CoursResource($cours)
-        ], 201);
+        }catch(\Exception $ex){
+            return ApiResponseClass::rollback($ex);
+        }    
     }
 
     /**
@@ -103,7 +106,7 @@ class CoursController extends Controller
     public function show($id)
     {
         $cours = $this->coursRepository->findById($id);
-        return new CoursResource($cours);
+        return ApiResponseClass::sendResponse(new CoursResource($cours),'',200);
     }
 
     /**
@@ -138,13 +141,14 @@ class CoursController extends Controller
      */
     public function update(CoursRequest $request, $id)
     {
-        $cours = $this->coursRepository->findById($id);
-        $updatedCours = $this->coursRepository->update($request->validated(), $cours);
+        try{
+            $cours = $this->coursRepository->findById($id);
+            $updatedCours = $this->coursRepository->update($request->validated(), $cours);
 
-        return response()->json([
-            'message' => 'Cours updated successfully',
-            'data' => new CoursResource($updatedCours)
-        ], 200);
+            return ApiResponseClass::sendResponse(new CoursResource($cours),'Cours Updated Successful',201);
+        }catch(\Exception $ex){
+            return ApiResponseClass::rollback($ex);
+        }
     }
 
     /**
@@ -171,8 +175,6 @@ class CoursController extends Controller
         $cours = $this->coursRepository->findById($id);
         $this->coursRepository->delete($cours);
 
-        return response()->json([
-            'message' => 'Cours deleted successfully'
-        ], 200);
+        return ApiResponseClass::sendResponse('Cours Delete Successful','',200);
     }
 }

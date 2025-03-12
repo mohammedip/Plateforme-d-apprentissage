@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Tag;
 use Illuminate\Http\Request;
-use App\Http\Requests\TagRequest;
+use App\Classes\ApiResponseClass;
 use App\Http\Resources\TagResource;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTagRequest;
+use App\Http\Requests\UpdateTagRequest;
 use App\Repositories\TagRepositoryInterface;
 
 /**
@@ -36,7 +38,7 @@ class TagController extends Controller
 
         if($tags->count() > 0){
             
-            return TagResource::collection($tags);
+            return ApiResponseClass::sendResponse(TagResource::collection($tags),'',200);
         }else{
 
             return response()->json(['message'=>'No tags for the moment'],200);
@@ -60,16 +62,23 @@ class TagController extends Controller
      *     @OA\Response(response=201, description="Tag created successfully")
      * )
      */
-    public function store(TagRequest $request)
+    public function store(StoreTagRequest $request)
     {
-        $tags = collect($request->validated()['tags'])->map(fn($tag) => ['name' => $tag['name']])->toArray();
-    
-        $this->tagRepository->create($tags);
+        try{
+            $tags = collect(explode(',', $request->input('tags')))
+            ->map(fn($tag) => ['name' => trim($tag)])
+            ->unique() 
+            ->values() 
+            ->toArray();    
+            $this->tagRepository->create($tags);
 
-        return response()->json([
+            return response()->json([
 
-            'message'=>'Tag created successfully',
-        ],201);
+                'message'=>'Tag created successfully',
+            ],201);
+        }catch(\Exception $ex){
+            return ApiResponseClass::rollback($ex);
+        }    
     }
 
   /**
@@ -98,7 +107,7 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-        return new TagResource($tag);
+        return ApiResponseClass::sendResponse(new TagResource($tag),'',200);
     }
 
 
@@ -128,15 +137,17 @@ class TagController extends Controller
      * @OA\Response(response=404, description="Tag not found")
      * )
      */
-    public function update(TagRequest $request, Tag $tag)
+    public function update(UpdateTagRequest $request, Tag $tag)
     {
-        $updatedTag=$this->tagRepository->update($request->validated(),$tag);
+        try{
+            
+            $updatedTag=$this->tagRepository->update($request->validated(),$tag);
 
-        return response()->json([
-
-            'message'=>'Tag updated successfully',
-            'data'=> new TagResource($updatedTag)
-        ],200);
+           
+            return ApiResponseClass::sendResponse(new TagResource($updatedTag),'Tag Updated Successful',201);
+        }catch(\Exception $ex){
+            return ApiResponseClass::rollback($ex);
+        }
     }
 
  /**
@@ -160,6 +171,6 @@ class TagController extends Controller
     public function destroy(Tag $tag)
     {
         $this->tagRepository->delete($tag);
-        return response()->json(['message'=>'Tag deleted successfully'],200);
+        return ApiResponseClass::sendResponse('Tag Delete Successful','',200);
     }
 }

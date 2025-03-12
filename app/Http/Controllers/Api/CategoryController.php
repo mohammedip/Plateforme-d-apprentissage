@@ -62,7 +62,7 @@ class CategoryController extends Controller
         try{
             $category = $this->categoryRepository->create($request->validated());
 
-            return ApiResponseClass::sendResponse(new CategoryResource($category),'Product Create Successful',201);
+            return ApiResponseClass::sendResponse(new CategoryResource($category),'Category Create Successful',201);
             
         }catch(\Exception $ex){
                 return ApiResponseClass::rollback($ex);
@@ -131,10 +131,7 @@ class CategoryController extends Controller
         try{
             $updatedCategory = $this->categoryRepository->update($request->validated(), $category);
 
-            return response()->json([
-                'message' => 'Category is updated successfully',
-                'data' => new CategoryResource($updatedCategory)
-            ], 200);
+            return ApiResponseClass::sendResponse(new CategoryResource($updatedCategory),'Category Update Successful','',201);
 
         }catch(\Exception $ex){
             return ApiResponseClass::rollback($ex);
@@ -163,6 +160,7 @@ class CategoryController extends Controller
     {
         $this->categoryRepository->delete($category);
 
-        return response()->json(['message' => 'Category deleted successfully'], 200);
+        return ApiResponseClass::sendResponse('Category Delete Successful','',200);
+       
     }
 }
