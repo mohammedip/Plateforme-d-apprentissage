@@ -27,14 +27,14 @@ use App\Models\Cours;
         $data = [
             'title' => 'Mathematics 101',
             'description' => 'A basic introduction to mathematics.',
-            'category_id' => 1,
+            'category_id' => 9,
             'mentor_id' => 2,
         ];
 
         $response = $this->postJson("api/courses", $data);
 
         $response->assertStatus(201);
-        $this->assertDatabaseHas('cours', ['title' => 'Mathematics 101']);
+        $this->assertDatabaseHas('courses', ['title' => 'Mathematics 101']);
     });
 
     test("can show a course", function () {
@@ -62,7 +62,7 @@ use App\Models\Cours;
         $response = $this->putJson("api/courses/{$course->id}", $updatedData);
 
         $response->assertStatus(201);
-        $this->assertDatabaseHas('cours', $updatedData);
+        $this->assertDatabaseHas('courses', $updatedData);
     });
 
     test("can delete a course", function () {
@@ -71,6 +71,6 @@ use App\Models\Cours;
         $response = $this->delete("api/courses/{$course->id}");
 
         $response->assertStatus(200);
-        $this->assertDatabaseMissing('cours', ['id' => $course->id]);
+        $this->assertDatabaseMissing('courses', ['id' => $course->id]);
     });
 

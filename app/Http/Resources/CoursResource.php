@@ -17,8 +17,9 @@ class CoursResource extends JsonResource
         return [
             'id' =>$this->id,
             'title' => $this->title,
+            'description' => $this->description,
             'category_id'=>$this->category ? $this->category->name : null,
-            'category_id'=>$this->category ? $this->category->name : null,
+            'mentor_id'=>$this->mentor ? $this->mentor->name : null,
         ];
     }
 }

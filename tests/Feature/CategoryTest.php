@@ -3,13 +3,14 @@
 use App\Models\Category;
 
 test("can list categories", function () {
+    Category::factory()->count(3)->create();
 
     $response = $this->get("api/v1/categories");
     $response->assertStatus(200);
     $response->assertJsonStructure([
         "data" => [
             "*" => [
-                'id', 'name', 'category_id'
+                'id', 'name'
             ],
         ],
     ]);
