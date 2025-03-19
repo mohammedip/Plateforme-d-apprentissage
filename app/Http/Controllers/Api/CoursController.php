@@ -202,15 +202,15 @@ class CoursController extends Controller implements HasMiddleware
         }
     }
 
-    public function enrollmentList($id){
+    public function enrollmentList($id)
+{
+    try {
+        $students = Enrollement::where('cours_id', $id)->with('user')->get()->pluck('user.name');
 
-        try{
-            $students = Enrollement::where('cours_id',$id)->get();
-
-            return ApiResponseClass::sendResponse(['Students' => $students->name ],201);
-            
-        }catch(\Exception $ex){
-                return ApiResponseClass::rollback($ex);
-        }
+        return ApiResponseClass::sendResponse(['Students' => $students], 201);
+    } catch (\Exception $ex) {
+        return ApiResponseClass::rollback($ex);
     }
+}
+
 }

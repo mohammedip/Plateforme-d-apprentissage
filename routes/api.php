@@ -31,6 +31,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/stats/categories', [StatistiqueController::class, 'CategoryStatistiques'])->middleware('auth:sanctum');
     Route::get('/stats/tags', [StatistiqueController::class, 'TagStatistiques'])->middleware('auth:sanctum');
     Route::post('/courses/{id}/enroll', [CoursController::class, 'enrolle'])->middleware('auth:sanctum');    
-    Route::post('/courses/{id}/enrollments', [CoursController::class, 'enrolle'])->middleware('auth:sanctum'); 
+    Route::post('/courses/{id}/enrollments', [CoursController::class, 'enrollmentList'])->middleware('auth:sanctum'); 
 
 });
