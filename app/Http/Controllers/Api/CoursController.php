@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Cours;
+use App\Models\Enrollement;
 use Illuminate\Http\Request;
 use App\Classes\ApiResponseClass;
 use App\Http\Requests\CoursRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\CoursResource;
+use App\Http\Resources\EnrollementResource;
 use App\Repositories\CoursRepositoryInterface;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
 /**
  * @OA\PathItem(path="/api/courses")
  */
-class CoursController extends Controller
+class CoursController extends Controller implements HasMiddleware
 {
     protected $coursRepository;
 
@@ -30,6 +35,14 @@ class CoursController extends Controller
      *     @OA\Response(response="200", description="A list of courses")
      * )
      */
+
+    public static function middleware(){
+
+        return [
+            new Middleware('auth:sanctum', except: ['index' , 'show'])
+        ];
+    }
+
     public function index()
     {
         $courses = $this->coursRepository->getAll();
@@ -62,9 +75,8 @@ class CoursController extends Controller
     public function store(CoursRequest $request)
     {
         try{
-            $cours = $this->coursRepository->create($request->validated());
-
-            if ($request->has('tags_id')) {
+            $cours = $this->coursRepository->create(array_merge($request->validated(),['mentor_id' => Auth::user()->id]));
+                if ($request->has('tags_id')) {
                 $tagIds = $request->input('tags_id');
                 $cours->tags()->attach($tagIds);
             }
@@ -145,7 +157,7 @@ class CoursController extends Controller
             $cours = $this->coursRepository->findById($id);
             $updatedCours = $this->coursRepository->update($request->validated(), $cours);
 
-            return ApiResponseClass::sendResponse(new CoursResource($cours),'Cours Updated Successful',201);
+            return ApiResponseClass::sendResponse(new CoursResource($updatedCours),'Cours Updated Successful',201);
         }catch(\Exception $ex){
             return ApiResponseClass::rollback($ex);
         }
@@ -176,5 +188,29 @@ class CoursController extends Controller
         $this->coursRepository->delete($cours);
 
         return ApiResponseClass::sendResponse('Cours Delete Successful','',200);
+    }
+
+    public function enrolle($id){
+
+        try{
+            $enrollement = Enrollement::create(['user_id'=> Auth::user()->id,'cours_id'=> $id,'progress'=> 'in_progress', ]);
+
+            return ApiResponseClass::sendResponse(new EnrollementResource($enrollement),201);
+            
+        }catch(\Exception $ex){
+                return ApiResponseClass::rollback($ex);
+        }
+    }
+
+    public function enrollmentList($id){
+
+        try{
+            $students = Enrollement::where('cours_id',$id)->get();
+
+            return ApiResponseClass::sendResponse(['Students' => $students->name ],201);
+            
+        }catch(\Exception $ex){
+                return ApiResponseClass::rollback($ex);
+        }
     }
 }

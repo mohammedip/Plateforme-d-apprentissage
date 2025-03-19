@@ -131,7 +131,7 @@ class CategoryController extends Controller
         try{
             $updatedCategory = $this->categoryRepository->update($request->validated(), $category);
 
-            return ApiResponseClass::sendResponse(new CategoryResource($updatedCategory),'Category Update Successful','',201);
+            return ApiResponseClass::sendResponse(new CategoryResource($updatedCategory),'Category Update Successful',201);
 
         }catch(\Exception $ex){
             return ApiResponseClass::rollback($ex);

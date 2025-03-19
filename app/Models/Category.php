@@ -22,6 +22,13 @@ class Category extends Model
 
     }
 
+    public function courses(){
+
+        return $this->hasMany(Cours::class);
+
+    }
+
+
     public function parentCategories(){
 
         return $this->belongsTo(Category::class, 'category_id');
