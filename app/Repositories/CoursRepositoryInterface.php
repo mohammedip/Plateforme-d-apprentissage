@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Cours;
+use Illuminate\Http\Request;
 
 
 interface CoursRepositoryInterface{
