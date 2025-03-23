@@ -9,7 +9,7 @@ use App\Models\Cours;
     test("can list courses", function () {
         Cours::factory()->count(3)->create();
 
-        $response = $this->get("api/courses");
+        $response = $this->get("api/v1/courses");
         $response->assertStatus(200);
         $response->assertJsonStructure([
             "data" => [
@@ -31,7 +31,7 @@ use App\Models\Cours;
             'mentor_id' => 2,
         ];
 
-        $response = $this->postJson("api/courses", $data);
+        $response = $this->postJson("api/v1/courses", $data);
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('courses', ['title' => 'Mathematics 101']);
@@ -40,7 +40,7 @@ use App\Models\Cours;
     test("can show a course", function () {
         $course = Cours::factory()->create();
 
-        $response = $this->get("api/courses/{$course->id}");
+        $response = $this->get("api/v1/courses/{$course->id}");
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
@@ -59,7 +59,7 @@ use App\Models\Cours;
             'mentor_id' => 2,
         ];
 
-        $response = $this->putJson("api/courses/{$course->id}", $updatedData);
+        $response = $this->putJson("api/v1/courses/{$course->id}", $updatedData);
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('courses', $updatedData);
@@ -68,7 +68,7 @@ use App\Models\Cours;
     test("can delete a course", function () {
         $course = Cours::factory()->create();
 
-        $response = $this->delete("api/courses/{$course->id}");
+        $response = $this->delete("api/v1/courses/{$course->id}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('courses', ['id' => $course->id]);
