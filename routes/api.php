@@ -5,9 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CoursController;
+use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\ProfileController;
-use App\Http\Controllers\Api\StatistiqueController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\StatistiqueController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -31,6 +32,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/stats/categories', [StatistiqueController::class, 'CategoryStatistiques'])->middleware('auth:sanctum');
     Route::get('/stats/tags', [StatistiqueController::class, 'TagStatistiques'])->middleware('auth:sanctum');
     Route::post('/courses/{id}/enroll', [CoursController::class, 'enrolle'])->middleware('auth:sanctum');    
-    Route::post('/courses/{id}/enrollments', [CoursController::class, 'enrolle'])->middleware('auth:sanctum'); 
+    Route::post('/courses/{id}/enrollments', [CoursController::class, 'enrollmentList'])->middleware('auth:sanctum'); 
+    Route::apiResource('videos',VideoController::class)->middleware('auth:sanctum');
 
 });
