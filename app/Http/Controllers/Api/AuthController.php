@@ -29,6 +29,11 @@ class AuthController extends Controller
     
              $this->authRepository->create($data);
             $user = $this->authRepository->findByEmail($request->email);
+
+            $validRoles = ['admin', 'mentor', 'etudiant'];
+            $role = in_array($data['role'] ?? 'etudiant', $validRoles) ? $data['role'] : 'etudiant';
+            $user->assignRole($role);
+            
             $token = $user->createToken($request->email);
             
             return ApiResponseClass::sendResponse(['user' => new UserResource($user), 'token' => $token->plainTextToken],'Register Successfully',201);
