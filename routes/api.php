@@ -2,8 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\MentorController;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\EtudiantController;
 use App\Http\Controllers\Api\CoursController;
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\ProfileController;
@@ -34,5 +36,11 @@ Route::prefix('v1')->group(function () {
     Route::post('/courses/{id}/enroll', [CoursController::class, 'enrolle'])->middleware('auth:sanctum');    
     Route::post('/courses/{id}/enrollments', [CoursController::class, 'enrollmentList'])->middleware('auth:sanctum'); 
     Route::apiResource('videos',VideoController::class)->middleware('auth:sanctum');
+
+    Route::get('/mentors/{id}/courses', [MentorController::class, 'getCourses']);
+    Route::get('/mentors/{id}/students', [MentorController::class, 'getStudents']);
+    Route::get('/mentors/{id}/performance', [MentorController::class, 'getPerformance']);
+    Route::get('/students/{id}/courses', [EtudiantController::class, 'getCourses']);
+    Route::get('/students/{id}/progress', [EtudiantController::class, 'getProgress']);
 
 });
