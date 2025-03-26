@@ -25,6 +25,8 @@ class CoursRequest extends FormRequest
             'title'=>'required|string|max:255',
             'description'=>'required',
             'category_id'=>'required|exists:categories,id',
+            'price'=>'required',
+            'difficulty' => ['sometimes', 'in:facile,moyen,difficile'],
         ];
     }
 }

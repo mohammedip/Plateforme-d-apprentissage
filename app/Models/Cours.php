@@ -17,6 +17,8 @@ class Cours extends Model
         'description',
         'category_id',
         'mentor_id',
+        'price',
+        'difficulty'
 
     ];
 
@@ -38,6 +40,11 @@ class Cours extends Model
     public function enrollements()
     {
         return $this->hasMany(Enrollement::class, 'cours_id');
+    }
+
+    public function videos()
+    {
+        return $this->hasMany(Video::class, 'cours_id');
     }
 
 }
