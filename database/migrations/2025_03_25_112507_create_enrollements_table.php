@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('enrollements', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('cours_id')->constrained('courses')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('progress', ['not_started', 'in_progress', 'completed'])->default('not_started');
-            $table->enum('status', ['en_attente', 'acceptée', 'refusée'])->default('not_started');
-            $table->primary(['cours_id', 'user_id']);
+            $table->enum('status', ['en_attente', 'acceptée', 'refusée'])->default('en_attente');
+            $table->unique(['cours_id', 'user_id']);
             $table->timestamps();
         });
     }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Video extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'videos';
 
     protected $fillable = [
@@ -19,6 +19,6 @@ class Video extends Model
     ];
 
     public function cours(){
-        return $this->belongsTo(Cours::class);
+        return $this->belongsTo(Cours::class, 'cours_id');
     }
 }

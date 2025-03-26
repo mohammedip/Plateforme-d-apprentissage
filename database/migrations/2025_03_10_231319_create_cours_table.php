@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
+            $table->enum('difficulty',['facile','moyen','difficile']);
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->foreignId('mentor_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();

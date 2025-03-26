@@ -14,6 +14,7 @@ use App\Http\Resources\EnrollementResource;
 use App\Repositories\CoursRepositoryInterface;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
+use PhpParser\Node\Stmt\TryCatch;
 
 /**
  * @OA\PathItem(path="/api/courses")
@@ -190,7 +191,7 @@ class CoursController extends Controller implements HasMiddleware
         return ApiResponseClass::sendResponse('Cours Delete Successful','',200);
     }
 
-    public function enrolle($id){
+    public static function enrolle($id){
 
         try{
             $enrollement = Enrollement::create(['user_id'=> Auth::user()->id,'cours_id'=> $id,'progress'=> 'in_progress', ]);
@@ -200,6 +201,8 @@ class CoursController extends Controller implements HasMiddleware
         }catch(\Exception $ex){
                 return ApiResponseClass::rollback($ex);
         }
+
+        
     }
 
     public function enrollmentList($id)

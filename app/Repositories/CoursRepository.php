@@ -14,7 +14,7 @@ class CoursRepository implements CoursRepositoryInterface{
 
     public function findById($id){
 
-        return Cours::findOrFail($id);
+        return Cours::with('videos')->findOrFail($id);
     }
 
     public function create(array $data){
